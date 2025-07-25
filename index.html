@@ -11,7 +11,38 @@
   <link rel="stylesheet" href="styles/overlay.css">
 </head>
 <body>
-  
+  <div id="pageWrapper">
+    <header>
+      <div id="logo">
+        <img src="assets/icons/logo.png" alt="Pokedex Logo" class="logo-img">
+        <h1>Pokedex</h1>
+      </div>
+      <div id="searchBar">
+        <input type="text" id="searchInput" placeholder="Search Pokemon...">
+        <button id="searchButton">Search</button>
+      </div>
+    </header>
+
+    <div id="contentWrapper">
+      <main>
+        <section id="pokemonList">
+        
+        </section>
+        <button id="loadMoreButton">Load More</button>
+      </main>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Pokedex Project – Built with PokeAPI</p>
+    </footer>
+  </div>
+
+ 
+  <div id="overlay" class="hidden">
+    <div id="overlayContent">
+    </div>
+  </div>
+
   <script src="scripts/api.js"></script>
   <script src="scripts/template.js"></script>
   <script src="scripts/script.js"></script>
