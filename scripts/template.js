@@ -7,17 +7,22 @@ function getPokemonCardTemplate(pokemon) {
   `;
 }
 function getPokemonCardTemplate(pokemon) {
-  let types = pokemon.types.map(t => t.type.name).join(", ");
+  let types = pokemon.types.map(t => `<span class="type-badge ${t.type.name}">${t.type.name.toUpperCase()}</span>`).join(" ");
   let bgColor = getTypeColor(pokemon.types[0].type.name);
 
   return `
     <div class="pokemon-card" style="background-color:${bgColor}">
-      <h3>#${pokemon.id} ${pokemon.name.toUpperCase()}</h3>
+      <div class="card-header">
+        <h3>#${pokemon.id} ${pokemon.name.toUpperCase()}</h3>
+      </div>
       <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-      <p>Type: ${types}</p>
+      <div class="type-container">
+        ${types}
+      </div>
     </div>
   `;
 }
+
 
 function getTypeColor(type) {
   const colors = {
