@@ -30,7 +30,7 @@ async function getOverlayCardTemplate(pokemon) {
     t => `<span class="type-badge ${t.type.name}">${t.type.name.toUpperCase()}</span>`
   ).join(" ");
 
-  // Lade die ersten 2 Moves inkl. Details
+
   let moves = await Promise.all(
     pokemon.moves.slice(0, 2).map(async (m) => await fetchMoveDetails(m.move.url))
   );

@@ -42,7 +42,6 @@ async function openOverlay(pokemonId) {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
     const pokemon = await response.json();
 
-    // Warten bis das Template fertig ist (async!)
     const overlayHTML = await getOverlayCardTemplate(pokemon);
     document.getElementById("overlayContent").innerHTML = overlayHTML;
     document.getElementById("overlay").classList.remove("hidden");
