@@ -1,64 +1,56 @@
-async function fetchPokemonList(limit = 20, offset = 0) {
-  const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
-  return await response.json();
-}
+let offset = 0;
+const limit = 20;
 
-async function fetchPokemonDetails(url) {
-  const response = await fetch(url);
-  return await response.json();
-}
+async function loadPokemon(limit, offset) {
+  let response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=" + limit + "&offset=" + offset);
+  let data = await response.json();
 
-function renderPokemon(pokemonData, container) {
-  container.innerHTML += getPokemonCardTemplate(pokemonData);
-  addCardClickEvents();
-}
+  let container = document.getElementById("pokemonList");
 
-async function init() {
-  try {
-    const data = await fetchPokemonList();
-    const container = document.getElementById("pokemonList");
-
-    for (let pokemon of data.results) {
-      const detailData = await fetchPokemonDetails(pokemon.url);
-      renderPokemon(detailData, container);
-    }
-  } catch (error) {
-    console.error("Fehler beim Laden der Pokémon:", error);
+  for (let p of data.results) {
+    let detailResponse = await fetch(p.url);
+    let pokemon = await detailResponse.json();
+    container.innerHTML += getPokemonCardTemplate(pokemon);
   }
+
+  makeCardsClickable();
 }
 
-function addCardClickEvents() {
-  const cards = document.querySelectorAll(".pokemon-card");
-  cards.forEach(card => {
-    card.addEventListener("click", () => {
-      const pokemonId = card.getAttribute("data-id");
-      openOverlay(pokemonId);
-    });
-  });
+async function loadMore() {
+  offset += limit;
+  await loadPokemon(limit, offset);
 }
 
 async function openOverlay(pokemonId) {
-  try {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
-    const pokemon = await response.json();
+  let overlayResponse = await fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonId);
+  let overlayPokemon = await overlayResponse.json();
 
-    const overlayHTML = await getOverlayCardTemplate(pokemon);
-    document.getElementById("overlayContent").innerHTML = overlayHTML;
-    document.getElementById("overlay").classList.remove("hidden");
-  } catch (error) {
-    console.error("Fehler beim Öffnen des Overlays:", error);
+  let moves = [];
+  for (let i = 0; i < 2; i++) {
+    let moveUrl = overlayPokemon.moves[i].move.url;
+    let moveResponse = await fetch(moveUrl);
+    let move = await moveResponse.json();
+    moves.push(move);
   }
+
+  document.getElementById("overlayContent").innerHTML = getOverlayCardTemplate(overlayPokemon, moves);
+  document.getElementById("overlay").classList.remove("hidden");
 }
 
-document.getElementById("overlay").addEventListener("click", (e) => {
-  if (e.target.id === "overlay") {
-    document.getElementById("overlay").classList.add("hidden");
-  }
-});
-
-async function fetchMoveDetails(url) {
-  const response = await fetch(url);
-  return await response.json();
+function makeCardsClickable() {
+  const cards = document.querySelectorAll(".pokemon-card");
+  cards.forEach(card => {
+    card.onclick = function () {
+      let id = card.getAttribute("data-id");
+      openOverlay(id);
+    };
+  });
 }
 
-window.onload = init;
+function closeOverlay() {
+  document.getElementById("overlay").classList.add("hidden");
+}
+
+window.onload = async function () {
+  await loadPokemon(limit, offset);
+};

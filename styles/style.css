@@ -74,4 +74,19 @@ footer {
   padding: 20px 0;
   width: 100%;
 }
+#loadMoreButton {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: #ef5350;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+#loadMoreButton:hover {
+  background: #d32f2f;
+}
+
 
