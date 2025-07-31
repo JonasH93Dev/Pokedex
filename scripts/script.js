@@ -1,56 +1,67 @@
 let offset = 0;
-const limit = 20;
+let limit = 20;
 
-async function loadPokemon(limit, offset) {
-  let response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=" + limit + "&offset=" + offset);
-  let data = await response.json();
+window.onload = async function () {
+  await loadPokemon();
+  document.getElementById("loadMoreButton").onclick = loadMore;
+};
 
-  let container = document.getElementById("pokemonList");
-
+async function loadPokemon() {
+  let data = await fetchPokemonList();
   for (let p of data.results) {
-    let detailResponse = await fetch(p.url);
-    let pokemon = await detailResponse.json();
-    container.innerHTML += getPokemonCardTemplate(pokemon);
+    let pokemon = await fetchPokemonDetails(p.url);
+    addPokemonCard(pokemon);
   }
-
-  makeCardsClickable();
+  addCardClicks(); 
 }
 
-async function loadMore() {
-  offset += limit;
-  await loadPokemon(limit, offset);
+async function fetchPokemonList() {
+  let response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=" + limit + "&offset=" + offset);
+  return await response.json();
 }
 
-async function openOverlay(pokemonId) {
-  let overlayResponse = await fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonId);
-  let overlayPokemon = await overlayResponse.json();
+async function fetchPokemonDetails(url) {
+  let response = await fetch(url);
+  return await response.json();
+}
 
+function addPokemonCard(pokemon) {
+  let container = document.getElementById("pokemonList");
+  container.innerHTML += getPokemonCardTemplate(pokemon);
+}
+
+function addCardClicks() {
+  let cards = document.querySelectorAll(".pokemon-card");
+  cards.forEach(card => {
+    card.onclick = function () { openOverlay(card.getAttribute("data-id")); };
+  });
+}
+
+async function openOverlay(id) {
+  let pokemon = await fetchPokemonDetails("https://pokeapi.co/api/v2/pokemon/" + id);
+  let moves = await fetchMoves(pokemon);
+  showOverlay(pokemon, moves);
+}
+
+async function fetchMoves(pokemon) {
   let moves = [];
   for (let i = 0; i < 2; i++) {
-    let moveUrl = overlayPokemon.moves[i].move.url;
-    let moveResponse = await fetch(moveUrl);
-    let move = await moveResponse.json();
-    moves.push(move);
+    let moveResponse = await fetch(pokemon.moves[i].move.url);
+    moves.push(await moveResponse.json());
   }
-
-  document.getElementById("overlayContent").innerHTML = getOverlayCardTemplate(overlayPokemon, moves);
-  document.getElementById("overlay").classList.remove("hidden");
+  return moves;
 }
 
-function makeCardsClickable() {
-  const cards = document.querySelectorAll(".pokemon-card");
-  cards.forEach(card => {
-    card.onclick = function () {
-      let id = card.getAttribute("data-id");
-      openOverlay(id);
-    };
-  });
+function showOverlay(pokemon, moves) {
+  document.getElementById("overlayContent").innerHTML = getOverlayCardTemplate(pokemon, moves);
+  document.getElementById("overlay").classList.remove("hidden");
 }
 
 function closeOverlay() {
   document.getElementById("overlay").classList.add("hidden");
 }
 
-window.onload = async function () {
-  await loadPokemon(limit, offset);
-};
+async function loadMore() {
+  offset += limit;
+  await loadPokemon();
+}
