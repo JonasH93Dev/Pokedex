@@ -1,4 +1,4 @@
-/* Grid für alle Pokémon-Karten */
+
 #pokemonList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -6,7 +6,6 @@
   padding: 20px 0;
 }
 
-/* Einzelne Pokémon-Karte */
 .pokemon-card {
   border-radius: 12px;
   padding: 12px;
@@ -17,19 +16,18 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Bild in der Karte */
+
 .pokemon-card img {
   width: 100px;
   height: 100px;
   margin: 10px 0;
 }
 
-/* Hover-Effekt */
 .pokemon-card:hover {
   transform: scale(1.05);
 }
 
-/* Container für Typ-Badges */
+
 .type-badges {
   display: flex;
   justify-content: center;
@@ -37,7 +35,7 @@
   margin-top: 8px;
 }
 
-/* Einzelnes Typ-Badge */
+
 .type-badge {
   padding: 4px 8px;
   border-radius: 8px;
