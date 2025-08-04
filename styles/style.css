@@ -87,3 +87,8 @@ footer {
   background: #fafafa;
   border-top: 1px solid #ddd;
 }
+#loadMoreButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}

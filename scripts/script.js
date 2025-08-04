@@ -2,39 +2,57 @@ let offset = 0;
 const limit = 20;
 
 window.onload = async function () {
+  showLoading();
   await loadPokemon();
+  hideLoading();
   document.getElementById("loadMoreButton").onclick = loadMore;
 };
 
+// Live-Suchfeld
 async function handleSearchInput() {
   let value = document.getElementById("searchInput").value.trim().toLowerCase();
-  if (value.length === 0) { 
+  if (value.length === 0) {
     resetToDefault();
     return;
   }
   if (value.length >= 3) {
+    showLoading();
     let matches = await fetchAndFilterPokemon(value);
-    renderSearchResults(matches);
+    await renderSearchResults(matches);
+    hideLoading();
+    document.getElementById("loadMoreButton").style.display = "none";
   }
 }
 
+// Standardliste wieder laden
 async function resetToDefault() {
   offset = 0;
   let container = document.getElementById("pokemonList");
   container.innerHTML = "";
+  showLoading();
   await loadPokemon();
+  hideLoading();
+  document.getElementById("loadMoreButton").style.display = "block";
 }
 
+// Holt und filtert Pokémon
 async function fetchAndFilterPokemon(searchValue) {
   let response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
   let allData = await response.json();
   return allData.results.filter(p => p.name.includes(searchValue));
 }
 
-
+// Rendert Suchergebnisse
 async function renderSearchResults(matches) {
   let container = document.getElementById("pokemonList");
   container.innerHTML = "";
+
+  // Wenn keine Treffer → Nachricht anzeigen
+  if (matches.length === 0) {
+    container.innerHTML = "<p style='text-align:center; font-size:18px; padding:20px;'>No Pokémon found.</p>";
+    return;
+  }
+
   for (let p of matches) {
     let detail = await fetchPokemonDetails(p.url);
     addPokemonCard(detail);
@@ -42,7 +60,7 @@ async function renderSearchResults(matches) {
   addCardClicks();
 }
 
-
+// Pokémon-Liste laden
 async function loadPokemon() {
   let data = await fetchPokemonList();
   for (let p of data.results) {
@@ -51,7 +69,6 @@ async function loadPokemon() {
   }
   addCardClicks();
 }
-
 
 async function fetchPokemonList() {
   let url = "https://pokeapi.co/api/v2/pokemon?limit=" + limit + "&offset=" + offset;
@@ -100,5 +117,21 @@ function closeOverlay() {
 
 async function loadMore() {
   offset += limit;
+  showLoading();
   await loadPokemon();
+  hideLoading();
+}
+
+function showLoading() {
+  document.getElementById("loadingOverlay").classList.remove("hidden");
+  let btn = document.getElementById("loadMoreButton");
+  btn.disabled = true;
+  btn.innerText = "Loading...";
+}
+
+function hideLoading() {
+  document.getElementById("loadingOverlay").classList.add("hidden");
+  let btn = document.getElementById("loadMoreButton");
+  btn.disabled = false;
+  btn.innerText = "Load More";
 }

@@ -11,29 +11,37 @@
   <link rel="stylesheet" href="styles/overlay.css">
 </head>
 <body>
-  <header>
-    <div id="logo">
-      <img src="assets/icons/logo.png" alt="Pokedex Logo" style="height:40px;">
-      <h1>Pokedex</h1>
-    </div>
-    <div id="searchBar">
-      <input type="text" id="searchInput" placeholder="Search Pokémon..." oninput="handleSearchInput()">
-    </div>
-  </header>
+  <div id="pageWrapper">
+    <header>
+      <div id="logo">
+        <img src="assets/icons/logo.png" alt="Pokedex Logo" style="height:40px;">
+        <h1>Pokedex</h1>
+      </div>
+      <div id="searchBar">
+        <input type="text" id="searchInput" placeholder="Search Pokémon..." oninput="handleSearchInput()">
+      </div>
+    </header>
 
-  <div id="contentWrapper">
-    <main>
-      <section id="pokemonList"></section>
-      <button id="loadMoreButton">Load More</button>
-    </main>
+    <div id="contentWrapper">
+      <main>
+        <section id="pokemonList"></section>
+        <button id="loadMoreButton">Load More</button>
+      </main>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Pokedex Project – Built with PokeAPI</p>
+    </footer>
   </div>
-
-  <footer>
-    <p>&copy; 2025 Pokedex Project – Built with PokeAPI</p>
-  </footer>
 
   <div id="overlay" class="hidden" onclick="closeOverlay()">
     <div id="overlayContent" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <div id="loadingOverlay" class="hidden">
+    <div class="loading-spinner">
+      <img src="assets/icons/pokeball.png" alt="Loading...">
+    </div>
   </div>
 
   <script src="scripts/template.js"></script>
