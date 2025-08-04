@@ -1,3 +1,8 @@
+/**
+ * Returns the official color associated with a Pokémon type.
+ * @param {string} type - The Pokémon type (e.g., "fire", "water").
+ * @returns {string} The corresponding HEX color code.
+ */
 function getTypeColor(type) {
   const colors = {
     normal: "#A8A77A", fire: "#EE8130", water: "#6390F0", electric: "#F7D02C",
@@ -9,6 +14,12 @@ function getTypeColor(type) {
   return colors[type] || "#68A090";
 }
 
+/**
+ * Generates an HTML template for a small Pokémon card.
+ * This card is displayed in the Pokémon grid list.
+ * @param {Object} pokemon - The Pokémon data.
+ * @returns {string} HTML markup for the Pokémon card.
+ */
 function getPokemonCardTemplate(pokemon) {
   let types = pokemon.types.map(t => t.type.name);
   let bgColor = getTypeColor(types[0]);
@@ -23,6 +34,13 @@ function getPokemonCardTemplate(pokemon) {
   `;
 }
 
+/**
+ * Generates an HTML template for the detailed Pokémon overlay card.
+ * This card mimics the Pokémon TCG card style.
+ * @param {Object} pokemon - The detailed Pokémon data.
+ * @param {Array} moves - The first two move details for the Pokémon.
+ * @returns {string} HTML markup for the Pokémon overlay card.
+ */
 function getOverlayCardTemplate(pokemon, moves) {
   let bgColor = getTypeColor(pokemon.types[0].type.name);
   return `
@@ -48,10 +66,6 @@ function getOverlayCardTemplate(pokemon, moves) {
             <p>${m.effect_entries[0]?.short_effect || 'No description available.'}</p>
           </div>
         `).join('')}
-      </div>
-      <div class="overlay-nav">
-        <button class="nav-btn" onclick="prevPokemon()">&#8592;</button>
-        <button class="nav-btn" onclick="nextPokemon()">&#8594;</button>
       </div>
     </div>
   `;
