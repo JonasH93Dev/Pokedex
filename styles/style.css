@@ -92,3 +92,46 @@ footer {
   cursor: not-allowed;
   transform: none;
 }
+main {
+  width: 100%;
+}
+
+#pokemonList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+footer {
+  background: #fafafa;
+  text-align: center;
+  padding: 16px;
+  border-top: 1px solid #ddd;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+  padding: 16px;
+  background: #f05050;
+  color: white;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center; 
+  gap: 10px; 
+}
+
+.logo-container img {
+  height: 40px;
+  width: 40px;
+}
+@media (max-width: 500px) {
+  .logo-container h1 {
+    display: none; /* Pokedex-Text ausblenden */
+  }
+}

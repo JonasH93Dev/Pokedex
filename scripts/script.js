@@ -1,5 +1,7 @@
 let offset = 0;
 const limit = 20;
+let loadedPokemon = []; // speichert alle aktuell angezeigten Pokémon
+let currentIndex = 0;   // Index des aktuell geöffneten Pokémon
 
 window.onload = async function () {
   showLoading();
@@ -27,6 +29,7 @@ async function handleSearchInput() {
 // Standardliste wieder laden
 async function resetToDefault() {
   offset = 0;
+  loadedPokemon = [];
   let container = document.getElementById("pokemonList");
   container.innerHTML = "";
   showLoading();
@@ -46,8 +49,8 @@ async function fetchAndFilterPokemon(searchValue) {
 async function renderSearchResults(matches) {
   let container = document.getElementById("pokemonList");
   container.innerHTML = "";
+  loadedPokemon = [];
 
-  // Wenn keine Treffer → Nachricht anzeigen
   if (matches.length === 0) {
     container.innerHTML = "<p style='text-align:center; font-size:18px; padding:20px;'>No Pokémon found.</p>";
     return;
@@ -84,6 +87,7 @@ async function fetchPokemonDetails(url) {
 function addPokemonCard(pokemon) {
   let container = document.getElementById("pokemonList");
   container.innerHTML += getPokemonCardTemplate(pokemon);
+  loadedPokemon.push(pokemon); // speichern für Overlay-Navigation
 }
 
 function addCardClicks() {
@@ -92,6 +96,10 @@ function addCardClicks() {
 }
 
 async function openOverlay(id) {
+  let index = loadedPokemon.findIndex(p => p.id == id);
+  if (index !== -1) {
+    currentIndex = index;
+  }
   let pokemon = await fetchPokemonDetails("https://pokeapi.co/api/v2/pokemon/" + id);
   let moves = await fetchFirstMoves(pokemon);
   showOverlay(pokemon, moves);
@@ -113,6 +121,21 @@ function showOverlay(pokemon, moves) {
 
 function closeOverlay() {
   document.getElementById("overlay").classList.add("hidden");
+}
+
+// Pfeilnavigation
+async function prevPokemon() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    openOverlay(loadedPokemon[currentIndex].id);
+  }
+}
+
+async function nextPokemon() {
+  if (currentIndex < loadedPokemon.length - 1) {
+    currentIndex++;
+    openOverlay(loadedPokemon[currentIndex].id);
+  }
 }
 
 async function loadMore() {

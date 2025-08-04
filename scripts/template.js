@@ -24,14 +24,10 @@ function getPokemonCardTemplate(pokemon) {
 }
 
 function getOverlayCardTemplate(pokemon, moves) {
-  let types = pokemon.types.map(t => t.type.name);
-  let bgColor = getTypeColor(types[0]);
-  let movesHTML = moves.map(m => {
-    let desc = m.effect_entries.find(e => e.language.name === "en")?.short_effect || "No description";
-    return `<div class="attack"><strong>${m.name.toUpperCase()} ${m.power ? "- Power: " + m.power : ""}</strong><p>${desc}</p></div>`;
-  }).join("");
+  let bgColor = getTypeColor(pokemon.types[0].type.name);
   return `
-    <div class="pokemon-tcg-card" style="background: linear-gradient(135deg, ${bgColor} 0%, #ffffff 100%);">
+    <div class="pokemon-tcg-card" style="background:${bgColor}; position: relative;">
+      <span class="close-btn" onclick="closeOverlay()">×</span>
       <div class="card-top">
         <span class="card-name">${pokemon.name.toUpperCase()}</span>
         <span class="card-hp">HP ${pokemon.stats[0].base_stat}</span>
@@ -41,12 +37,21 @@ function getOverlayCardTemplate(pokemon, moves) {
       </div>
       <div class="card-info">
         <div class="types">
-          ${types.map(t => `<span class="type-badge" style="background-color:${getTypeColor(t)}">${t.toUpperCase()}</span>`).join("")}
+          ${pokemon.types.map(t => `<span class="type-badge" style="background-color:${getTypeColor(t.type.name)}">${t.type.name.toUpperCase()}</span>`).join('')}
         </div>
-        <p><strong>Height:</strong> ${(pokemon.height / 10).toFixed(1)} m</p>
-        <p><strong>Weight:</strong> ${(pokemon.weight / 10).toFixed(1)} kg</p>
+        <p><strong>Height:</strong> ${pokemon.height / 10} m</p>
+        <p><strong>Weight:</strong> ${pokemon.weight / 10} kg</p>
         <p><strong>Base Experience:</strong> ${pokemon.base_experience}</p>
-        ${movesHTML}
+        ${moves.map(m => `
+          <div class="attack">
+            <strong>${m.name.toUpperCase()} - Power: ${m.power || 'N/A'}</strong>
+            <p>${m.effect_entries[0]?.short_effect || 'No description available.'}</p>
+          </div>
+        `).join('')}
+      </div>
+      <div class="overlay-nav">
+        <button class="nav-btn" onclick="prevPokemon()">&#8592;</button>
+        <button class="nav-btn" onclick="nextPokemon()">&#8594;</button>
       </div>
     </div>
   `;

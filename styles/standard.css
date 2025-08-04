@@ -7,6 +7,7 @@ html, body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
 }
 
 #contentWrapper {
@@ -14,11 +15,7 @@ html, body {
   max-width: 1440px;
   margin: 0 auto;
   width: 100%;
+  padding: 0 20px; /* Damit nichts am Rand klebt */
+  box-sizing: border-box;
 }
 
-footer {
-  background: #fafafa;
-  text-align: center;
-  padding: 16px;
-  border-top: 1px solid #ddd;
-}
