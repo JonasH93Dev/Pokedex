@@ -2,6 +2,7 @@ let offset = 0;
 const limit = 20;
 let loadedPokemon = []; // Stores all currently displayed Pokémon
 let currentIndex = 0;   // Index of the currently opened Pokémon
+let isSearchMode = false; // NEW: Tracks if we're in search mode
 
 window.onload = async function () {
   showLoading();
@@ -20,6 +21,7 @@ async function handleSearchInput() {
     return;
   }
   if (value.length >= 3) {
+    isSearchMode = true; // We're in search mode
     showLoading();
     const matches = await fetchAndFilterPokemon(value);
     await renderSearchResults(matches);
@@ -34,6 +36,7 @@ async function handleSearchInput() {
 async function resetToDefault() {
   offset = 0;
   loadedPokemon = [];
+  isSearchMode = false; // Back to normal mode
   const container = document.getElementById("pokemonList");
   container.innerHTML = "";
   showLoading();
@@ -153,26 +156,38 @@ async function fetchFirstMoves(pokemon) {
 }
 
 /**
- * Displays the overlay with Pokémon details.
- * @param {Object} pokemon - Pokémon data.
- * @param {Array} moves - Pokémon moves.
+ * Displays the overlay with Pokémon details and manages navigation buttons.
+ * Handles hiding/showing of Prev/Next buttons depending on search mode and position.
+ * 
+ * @param {Object} pokemon - The Pokémon data object.
+ * @param {Array} moves - Array of Pokémon moves to display.
  */
 function showOverlay(pokemon, moves) {
   document.getElementById("overlayContent").innerHTML = getOverlayCardTemplate(pokemon, moves);
   document.getElementById("overlay").classList.remove("hidden");
 
-  // Hide prev button if first Pokémon
   const prevBtn = document.querySelector(".nav-btn.prev");
+  const nextBtn = document.querySelector(".nav-btn.next");
+  const isSearchMode = document.getElementById("searchInput").value.trim().length >= 3;
+
+  // Prev button: hide if first Pokémon
   if (prevBtn) {
     prevBtn.style.display = currentIndex === 0 ? "none" : "inline-block";
   }
 
-  // Hide next button if last Pokémon
-  const nextBtn = document.querySelector(".nav-btn.next");
+  // Next button:
+  // - In search mode: hide if at the last Pokémon
+  // - In normal mode: always show (to allow loading next batch)
   if (nextBtn) {
-    nextBtn.style.display = currentIndex === loadedPokemon.length - 1 ? "inline-block" : "inline-block";
+    if (isSearchMode && currentIndex === loadedPokemon.length - 1) {
+      nextBtn.style.display = "none";
+    } else {
+      nextBtn.style.display = "inline-block";
+    }
   }
 }
+
+
 
 /**
  * Closes the overlay.
@@ -199,8 +214,7 @@ async function nextPokemon() {
   if (currentIndex < loadedPokemon.length - 1) {
     currentIndex++;
     openOverlay(loadedPokemon[currentIndex].id);
-  } else {
-    // Load more if at the last Pokémon
+  } else if (!isSearchMode) { // Only load more if NOT in search mode
     await loadMore();
     currentIndex++;
     openOverlay(loadedPokemon[currentIndex].id);
