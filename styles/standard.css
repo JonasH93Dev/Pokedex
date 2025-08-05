@@ -15,7 +15,7 @@ html, body {
   max-width: 1440px;
   margin: 0 auto;
   width: 100%;
-  padding: 0 20px; /* Damit nichts am Rand klebt */
+  padding: 0 20px; 
   box-sizing: border-box;
 }
 

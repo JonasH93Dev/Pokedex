@@ -44,3 +44,8 @@
   color: #fff;
   text-transform: uppercase;
 }
+
+.pokemon-card {
+  cursor: pointer;
+  transition: transform 0.2s ease; 
+}

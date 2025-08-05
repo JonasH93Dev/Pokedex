@@ -1,7 +1,7 @@
 /**
- * Returns the official color associated with a Pokémon type.
+ * Returns a color code for the given Pokémon type.
  * @param {string} type - The Pokémon type (e.g., "fire", "water").
- * @returns {string} The corresponding HEX color code.
+ * @returns {string} - The corresponding hex color code.
  */
 function getTypeColor(type) {
   const colors = {
@@ -15,14 +15,17 @@ function getTypeColor(type) {
 }
 
 /**
- * Generates an HTML template for a small Pokémon card.
- * This card is displayed in the Pokémon grid list.
- * @param {Object} pokemon - The Pokémon data.
- * @returns {string} HTML markup for the Pokémon card.
+ * Generates the HTML template for a single Pokémon card.
+ * @param {Object} pokemon - The Pokémon object containing its data.
+ * @param {number} pokemon.id - The Pokémon's ID.
+ * @param {string} pokemon.name - The Pokémon's name.
+ * @param {Array} pokemon.types - The Pokémon's type objects.
+ * @param {Object} pokemon.sprites - The Pokémon's sprite images.
+ * @returns {string} - The HTML string for the Pokémon card.
  */
 function getPokemonCardTemplate(pokemon) {
-  let types = pokemon.types.map(t => t.type.name);
-  let bgColor = getTypeColor(types[0]);
+  const types = pokemon.types.map(t => t.type.name);
+  const bgColor = getTypeColor(types[0]);
   return `
     <div class="pokemon-card" data-id="${pokemon.id}" style="background-color:${bgColor}">
       <h3>#${pokemon.id} ${pokemon.name.toUpperCase()}</h3>
@@ -35,14 +38,18 @@ function getPokemonCardTemplate(pokemon) {
 }
 
 /**
- * Generates an HTML template for the detailed Pokémon overlay card.
- * This card mimics the Pokémon TCG card style.
- * @param {Object} pokemon - The detailed Pokémon data.
- * @param {Array} moves - The first two move details for the Pokémon.
- * @returns {string} HTML markup for the Pokémon overlay card.
+ * Generates the HTML template for the Pokémon TCG-style overlay card.
+ * Includes Pokémon stats, types, moves, and navigation buttons.
+ * @param {Object} pokemon - The Pokémon object containing its data.
+ * @param {number} pokemon.id - The Pokémon's ID.
+ * @param {string} pokemon.name - The Pokémon's name.
+ * @param {Array} pokemon.types - The Pokémon's type objects.
+ * @param {Object} pokemon.sprites - The Pokémon's sprite images.
+ * @param {Array} moves - Array of the Pokémon's first move objects.
+ * @returns {string} - The HTML string for the overlay card.
  */
 function getOverlayCardTemplate(pokemon, moves) {
-  let bgColor = getTypeColor(pokemon.types[0].type.name);
+  const bgColor = getTypeColor(pokemon.types[0].type.name);
   return `
     <div class="pokemon-tcg-card" style="background:${bgColor}; position: relative;">
       <span class="close-btn" onclick="closeOverlay()">×</span>
@@ -66,6 +73,10 @@ function getOverlayCardTemplate(pokemon, moves) {
             <p>${m.effect_entries[0]?.short_effect || 'No description available.'}</p>
           </div>
         `).join('')}
+      </div>
+      <div class="overlay-nav">
+        <button class="nav-btn prev" onclick="prevPokemon()">&#8592;</button>
+        <button class="nav-btn next" onclick="nextPokemon()">&#8594;</button>
       </div>
     </div>
   `;
